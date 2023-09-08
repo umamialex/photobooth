@@ -22,6 +22,7 @@ function App() {
   const [devices, setDevices] = React.useState([])
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
   const [isCounting, setIsCounting] = React.useState(false)
+  const [duration, setDuration] = React.useState(3)
   const [imgSrc, setImgSrc] = React.useState(null)
   const [playBeep] = useSound(beep)
   const [playShutter] = useSound(shutter)
@@ -77,8 +78,7 @@ function App() {
             position: 'absolute',
             right: '50%',
             mr: -7,
-            bottom: 0,
-            mb: 30,
+            bottom: '25vh',
           }}
           onClick={() => setImgSrc(null)}
         >
@@ -118,15 +118,14 @@ function App() {
                   position: 'absolute',
                   right: '50%',
                   mr: -13,
-                  bottom: 0,
-                  mb: 30,
+                  bottom: '25vh',
                 }}
                 onClick={() => setIsCounting(true)}
               >
                 <CameraIcon
                   sx={{mr: 1}}
                 />
-                3-Second Countdown
+                {duration}-Second Countdown
               </Fab>
             ) : null}
             {isCounting ? (
@@ -152,14 +151,14 @@ function App() {
                   style={{
                     position: 'absolute',
                     left: '50vw',
-                    bottom: '20vh',
+                    bottom: '25vh',
                     marginLeft: '-6em',
                     marginBottom: '-6em',
                   }}
                 >
                   <CountdownCircleTimer
                     isPlaying
-                    duration={3}
+                    duration={duration}
                     trailColor="#fff"
                     colors={['#004777', '#F7B801', '#A30000', '#A30000']}
                     colorsTime={[3, 2, 1, 0]}
@@ -184,7 +183,7 @@ function App() {
         onClick={() => setIsDrawerOpen(true)}
         sx={{
           position: 'absolute',
-          right: '1em',
+          left: '1em',
           bottom: '1em',
         }}
       >
@@ -206,6 +205,16 @@ function App() {
             return <MenuItem value={device.deviceId}>{device.label}</MenuItem>
           })}
         </Select>
+        <Select
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          sx={{
+            margin: '1em',
+          }}
+        >
+          <MenuItem value={3}>3s</MenuItem>
+          <MenuItem value={5}>5s</MenuItem>
+        </Select>
       </Drawer>
     </>
   )
@@ -215,20 +224,20 @@ export default App
 
 
 function rotate(srcBase64, degrees, callback) {
-    const canvas = document.createElement('canvas');
-    const ctx    = canvas.getContext('2d');
-    const image  = new Image();
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const image = new Image();
 
-    image.onload = function () {
-          canvas.width  = degrees % 180 === 0 ? image.width : image.height;
-          canvas.height = degrees % 180 === 0 ? image.height : image.width;
+  image.onload = function () {
+    canvas.width  = degrees % 180 === 0 ? image.width : image.height;
+    canvas.height = degrees % 180 === 0 ? image.height : image.width;
 
-          ctx.translate(canvas.width / 2, canvas.height / 2);
-          ctx.rotate(degrees * Math.PI / 180);
-          ctx.drawImage(image, image.width / -2, image.height / -2);
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(degrees * Math.PI / 180);
+    ctx.drawImage(image, image.width / -2, image.height / -2);
 
-          callback(canvas.toDataURL());
-        };
+    callback(canvas.toDataURL());
+  };
 
-    image.src = srcBase64;
+  image.src = srcBase64;
 }
