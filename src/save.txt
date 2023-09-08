@@ -1,0 +1,39 @@
+
+        <Box
+          ref={form}
+          component="form"
+          autoComplete="off"
+          sx={{
+            position: 'absolute',
+            right: '50%',
+            mr: '-10em',
+            bottom: '25vh',
+            mb: 10,
+            width: '20em',
+          }}
+          onSubmit={sendEmail}
+        >
+          <Stack spacing={2} direction="row">
+            <TextField
+              label="E-mail"
+              variant="filled"
+              color="warning"
+              fullWidth
+              type="email"
+              name="user_email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{
+                background: '#fff',
+              }}
+              error={!!error}
+            />
+            <Button
+              variant="contained"
+              color="success"
+              type="submit"
+            >Send</Button>
+          </Stack>
+          
+        </Box>
