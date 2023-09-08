@@ -5,10 +5,6 @@ import Drawer from '@mui/material/Drawer'
 import Fab from '@mui/material/Fab'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
-import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -31,7 +27,7 @@ function App() {
   const [duration, setDuration] = React.useState(3)
   const [imgSrc, setImgSrc] = React.useState(null)
   const [email, setEmail ] = React.useState('')
-  const [error, setError] = React.useState(false)
+  // const [error, setError] = React.useState(false)
   const [playBeep] = useSound(beep)
   const [playShutter] = useSound(shutter)
 
@@ -122,7 +118,7 @@ function App() {
               position: 'absolute',
               right: '50%',
               mr: -8,
-              bottom: '20vh',
+              bottom: '35vh',
             }}
             onClick={() => setImgSrc(null)}
             className="bounce-in"
@@ -160,20 +156,20 @@ function App() {
             {!isCounting ? (
               <Fab
                 variant="extended"
-                color="primary"
+                color="success"
                 size="large"
                 sx={{
                   position: 'absolute',
                   right: '50%',
                   mr: -13,
-                  bottom: '25vh',
+                  bottom: '35vh',
                 }}
                 onClick={() => setIsCounting(true)}
               >
                 <CameraIcon
                   sx={{mr: 1}}
                 />
-                {duration}-Second Countdown
+                {duration} Second Countdown
               </Fab>
             ) : null}
             {isCounting ? (
@@ -199,7 +195,7 @@ function App() {
                   style={{
                     position: 'absolute',
                     left: '50vw',
-                    bottom: '27vh',
+                    bottom: '35vh',
                     marginLeft: '-6em',
                     marginBottom: '-6em',
                   }}
@@ -208,7 +204,7 @@ function App() {
                     isPlaying
                     duration={duration}
                     trailColor="#fff"
-                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                    colors={['#0c0', '#ff0', '#c00', '#c00']}
                     colorsTime={[3, 2, 1, 0]}
                     onComplete={(e) => handleCountdown(e, getScreenshot)}
                     onUpdate={(t) => t ? playBeep() : playShutter()}
