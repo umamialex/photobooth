@@ -133,9 +133,9 @@ function App() {
                 style={{
                   position: 'absolute',
                   left: '50vw',
-                  top: '50vh',
+                  bottom: '20vh',
                   marginLeft: '-6em',
-                  marginTop: '-6em',
+                  marginBottom: '-6em',
                 }}
               >
                 <CountdownCircleTimer
