@@ -183,8 +183,8 @@ function App() {
         onClick={() => setIsDrawerOpen(true)}
         sx={{
           position: 'absolute',
-          left: '1em',
-          bottom: '1em',
+          right: '1em',
+          top: '1em',
         }}
       >
         <SettingsIcon/>
@@ -215,6 +215,19 @@ function App() {
           <MenuItem value={3}>3s</MenuItem>
           <MenuItem value={5}>5s</MenuItem>
         </Select>
+        <Fab
+          variant="extended"
+          color="warning"
+          size="large"
+          sx={{
+            mt: 1,
+          }}
+          onClick={() => location.reload()}
+        >
+          <RestartAltIcon
+            sx={{margin: 1}}
+          />
+        </Fab>
       </Drawer>
     </>
   )
