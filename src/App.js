@@ -5,20 +5,25 @@ import Drawer from '@mui/material/Drawer';
 import Fab from '@mui/material/Fab'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 import SettingsIcon from '@mui/icons-material/Settings';
+import CameraIcon from '@mui/icons-material/Camera';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 function App() {
   const [deviceId, setDeviceId] = React.useState({})
   const [devices, setDevices] = React.useState([])
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
+  const [isCounting, setIsCounting] = React.useState(false)
+  const [imgSrc, setImgSrc] = React.useState(null)
 
   const handleDevices = React.useCallback(
     mediaDevices => {
       const d = mediaDevices.filter(({ kind }) => kind === "videoinput")
       setDevices(d)
 
-      setDeviceId(d.find((c) => c.label.includes('ZV')).deviceId)
+      setDeviceId(d.find((c) => (c.label.includes('ZV'))).deviceId)
     },
     [setDevices, setDeviceId]
   )
@@ -33,6 +38,50 @@ function App() {
     },
     [handleDevices]
   )
+
+  const handleCountdown = (e, getScreenshot) => {
+    rotate(getScreenshot(), -90, (i) => {
+      setImgSrc(i)
+      setIsCounting(false)
+    })
+  }
+
+  if (imgSrc) {
+    return (
+      <div
+        style={{
+          paddingTop: '2em',
+          textAlign: 'center',
+        }}
+      >
+        <img
+          alt="selfie"
+          src={imgSrc}
+          style={{
+            height: '90vh',
+          }}
+        />
+        <Fab
+          variant="extended"
+          color="warning"
+          size="large"
+          sx={{
+            position: 'absolute',
+            right: '50%',
+            mr: -7,
+            bottom: 0,
+            mb: 30,
+          }}
+          onClick={() => setImgSrc(null)}
+        >
+          <RestartAltIcon
+            sx={{mr: 1}}
+          />
+          Retake
+        </Fab>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -49,7 +98,54 @@ function App() {
           width: '100vh',
           transform: 'rotate(-90deg)',
         }}
-      />
+      >
+        {({ getScreenshot }) => (
+          <>
+            {!isCounting ? (
+              <Fab
+                variant="extended"
+                color="primary"
+                size="large"
+                sx={{
+                  position: 'absolute',
+                  right: '50%',
+                  mr: -13,
+                  bottom: 0,
+                  mb: 30,
+                }}
+                onClick={() => setIsCounting(true)}
+              >
+                <CameraIcon
+                  sx={{mr: 1}}
+                />
+                3-Second Countdown
+              </Fab>
+            ) : null}
+            {isCounting ? (
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '50vw',
+                  top: '50vh',
+                  marginLeft: '-6em',
+                  marginTop: '-6em',
+                }}
+              >
+                <CountdownCircleTimer
+                  isPlaying
+                  duration={3}
+                  trailColor="#fff"
+                  colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                  colorsTime={[3, 2, 1, 0]}
+                  onComplete={(e) => handleCountdown(e, getScreenshot)}
+                >
+                  {({ remainingTime }) => <h1 style={{color: '#fff'}}>{remainingTime}</h1>}
+                </CountdownCircleTimer>
+              </div>
+            ) : null}
+          </>
+        )}
+      </Webcam>
       <Fab
         color="error"
         size="small"
@@ -84,3 +180,23 @@ function App() {
 }
 
 export default App
+
+
+function rotate(srcBase64, degrees, callback) {
+    const canvas = document.createElement('canvas');
+    const ctx    = canvas.getContext('2d');
+    const image  = new Image();
+
+    image.onload = function () {
+          canvas.width  = degrees % 180 === 0 ? image.width : image.height;
+          canvas.height = degrees % 180 === 0 ? image.height : image.width;
+
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate(degrees * Math.PI / 180);
+          ctx.drawImage(image, image.width / -2, image.height / -2);
+
+          callback(canvas.toDataURL());
+        };
+
+    image.src = srcBase64;
+}
