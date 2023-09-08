@@ -30,6 +30,7 @@ function App() {
   const [isCounting, setIsCounting] = React.useState(false)
   const [duration, setDuration] = React.useState(3)
   const [imgSrc, setImgSrc] = React.useState(null)
+  const [email, setEmail ] = React.useState('')
   const [error, setError] = React.useState(false)
   const [playBeep] = useSound(beep)
   const [playShutter] = useSound(shutter)
@@ -80,13 +81,12 @@ function App() {
               boxShadow: '#000a 0 0.25em 2em',
             }}
           />
-          <div className="form">
+          <div className="form bounce-in">
             <form id="emailjsform" onSubmit={function(e) {
               event.preventDefault()
 
               const dT = new DataTransfer()
               dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
-              console.log(dT.files)
               document.querySelector('#photo').files = dT.files
 
               emailjs.sendForm(
@@ -94,11 +94,22 @@ function App() {
                 'umamiphotoboothtemplate',
                 document.querySelector('#emailjsform'),
                 'ZmY3p17W089Wzndyc',
-              ).then(() => {console.log('done')}, (err) => {
+              ).then(() => {
+                setImgSrc(null)
+              }, (err) => {
                 console.error(err)
+                setImgSrc(null)
               })
             }}>
-              <input type="email" name="email" id="email" placeholder="Email" autocomplete="off"/>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Email"
+                autocomplete="off"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <input type="file" name="photo" id="photo"/>
               <input type="submit" value="Send" id="send"/>
             </form>
@@ -114,6 +125,7 @@ function App() {
               bottom: '20vh',
             }}
             onClick={() => setImgSrc(null)}
+            className="bounce-in"
           >
             <RestartAltIcon
               sx={{mr: 1}}

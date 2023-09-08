@@ -111,3 +111,23 @@
   from { opacity: 1; height: 100vh; }
   to { opacity: 0; height: 100vh;}
 }
+
+.bounce-in {
+  animation: bounce-in 2s ease;
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(.3);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(.3);
+  }
+  90% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% { transform: scale(1); }
+}
