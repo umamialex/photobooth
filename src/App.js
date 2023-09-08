@@ -11,12 +11,19 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CameraIcon from '@mui/icons-material/Camera';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
+import useSound from 'use-sound'
+
+import beep from './beep.mp3'
+import shutter from './shutter.mp3'
+
 function App() {
   const [deviceId, setDeviceId] = React.useState({})
   const [devices, setDevices] = React.useState([])
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
   const [isCounting, setIsCounting] = React.useState(false)
   const [imgSrc, setImgSrc] = React.useState(null)
+  const [playBeep] = useSound(beep)
+  const [playShutter] = useSound(shutter)
 
   const handleDevices = React.useCallback(
     mediaDevices => {
@@ -138,6 +145,7 @@ function App() {
                   colors={['#004777', '#F7B801', '#A30000', '#A30000']}
                   colorsTime={[3, 2, 1, 0]}
                   onComplete={(e) => handleCountdown(e, getScreenshot)}
+                  onUpdate={(t) => t ? playBeep() : playShutter()}
                 >
                   {({ remainingTime }) => <h1 style={{color: '#fff'}}>{remainingTime}</h1>}
                 </CountdownCircleTimer>
