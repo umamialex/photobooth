@@ -10,6 +10,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import SettingsIcon from '@mui/icons-material/Settings';
 import CameraIcon from '@mui/icons-material/Camera';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import NorthIcon from '@mui/icons-material/North';
 
 import useSound from 'use-sound'
 
@@ -129,27 +130,50 @@ function App() {
               </Fab>
             ) : null}
             {isCounting ? (
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '50vw',
-                  bottom: '20vh',
-                  marginLeft: '-6em',
-                  marginBottom: '-6em',
-                }}
-              >
-                <CountdownCircleTimer
-                  isPlaying
-                  duration={3}
-                  trailColor="#fff"
-                  colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-                  colorsTime={[3, 2, 1, 0]}
-                  onComplete={(e) => handleCountdown(e, getScreenshot)}
-                  onUpdate={(t) => t ? playBeep() : playShutter()}
+              <>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '0vw',
+                    width: '100vw',
+                    top: '10vh',
+                    textAlign: 'center',
+                    display: 'inline-block',
+                    color: '#fff',
+                  }}
+                  className="bounce"
                 >
-                  {({ remainingTime }) => <h1 style={{color: '#fff'}}>{remainingTime}</h1>}
-                </CountdownCircleTimer>
-              </div>
+                  <NorthIcon fontSize="large" sx={{mb: -2}}/>
+                  <h1>
+                    Look up at<br/>the camera! 
+                  </h1>
+                </div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '50vw',
+                    bottom: '20vh',
+                    marginLeft: '-6em',
+                    marginBottom: '-6em',
+                  }}
+                >
+                  <CountdownCircleTimer
+                    isPlaying
+                    duration={3}
+                    trailColor="#fff"
+                    colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+                    colorsTime={[3, 2, 1, 0]}
+                    onComplete={(e) => handleCountdown(e, getScreenshot)}
+                    onUpdate={(t) => t ? playBeep() : playShutter()}
+                  >
+                    {({ remainingTime }) => 
+                      <h1
+                        style={{color: '#fff'}}
+                        className="bounce2"
+                      >{remainingTime}</h1>}
+                  </CountdownCircleTimer>
+                </div>
+              </>
             ) : null}
           </>
         )}
