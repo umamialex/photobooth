@@ -1,17 +1,26 @@
 import './App.css'
 import React from 'react'
 import Webcam from 'react-webcam'
+import Drawer from '@mui/material/Drawer';
+import Fab from '@mui/material/Fab'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function App() {
   const [deviceId, setDeviceId] = React.useState({})
   const [devices, setDevices] = React.useState([])
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
 
   const handleDevices = React.useCallback(
-    mediaDevices =>
-      setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
-    [setDevices]
+    mediaDevices => {
+      const d = mediaDevices.filter(({ kind }) => kind === "videoinput")
+      setDevices(d)
+
+      setDeviceId(d.find((c) => c.label.includes('ZV')).deviceId)
+    },
+    [setDevices, setDeviceId]
   )
 
   const handleChange = (e) => {
@@ -41,14 +50,35 @@ function App() {
           transform: 'rotate(-90deg)',
         }}
       />
-      <Select
-        value={deviceId}
-        onChange={handleChange}
+      <Fab
+        color="error"
+        size="small"
+        onClick={() => setIsDrawerOpen(true)}
+        sx={{
+          position: 'absolute',
+          right: '1em',
+          bottom: '1em',
+        }}
       >
-        {devices.map((device, key) => {
-          return <MenuItem value={device.deviceId}>{device.label}</MenuItem>
-        })}
-      </Select>
+        <SettingsIcon/>
+      </Fab>
+      <Drawer
+        anchor="right"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+      >
+        <Select
+          value={deviceId}
+          onChange={handleChange}
+          sx={{
+            margin: '1em',
+          }}
+        >
+          {devices.map((device, key) => {
+            return <MenuItem value={device.deviceId}>{device.label}</MenuItem>
+          })}
+        </Select>
+      </Drawer>
     </>
   )
 }
