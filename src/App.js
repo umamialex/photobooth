@@ -64,59 +64,64 @@ function App() {
 
   if (imgSrc) {
     return (
-      <div
-        style={{
-          paddingTop: '2em',
-          textAlign: 'center',
-        }}
-      >
-        <img
-          alt="selfie"
-          src={imgSrc}
+      <>
+        <div id="flash" />
+        <div
           style={{
-            height: '90vh',
+            paddingTop: '1.9em',
+            textAlign: 'center',
           }}
-        />
-				<form id="emailjsform" onSubmit={function(e) {
-          event.preventDefault()
-
-          const dT = new DataTransfer();
-          dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
-          console.log(dT.files)
-          document.querySelector('#photo').files = dT.files;
-
-          emailjs.sendForm(
-            'umamiphotobooth',
-            'umamiphotoboothtemplate',
-            document.querySelector('#emailjsform'),
-            'ZmY3p17W089Wzndyc',
-          ).then(() => {console.log('done')}, (err) => {
-            console.error(err)
-          })
-				}}>
-					<label>Email</label>
-					<input type="email" name="email" />
-          <input type="file" name="photo" id="photo"/>
-					<input type="submit" value="Send" />
-				</form>
-        <Fab
-          variant="extended"
-          color="warning"
-          size="large"
-          sx={{
-            position: 'absolute',
-            right: '50%',
-            mr: -10,
-            bottom: '25vh',
-          }}
-          onClick={() => setImgSrc(null)}
         >
-          <RestartAltIcon
-            sx={{mr: 1}}
+          <img
+            alt="selfie"
+            src={imgSrc}
+            style={{
+              height: '93.5vh',
+              boxShadow: '#000a 0 0.25em 2em',
+            }}
           />
-          New Picture
-        </Fab>
-      </div>
+          <div className="form">
+            <form id="emailjsform" onSubmit={function(e) {
+              event.preventDefault()
+
+              const dT = new DataTransfer()
+              dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
+              console.log(dT.files)
+              document.querySelector('#photo').files = dT.files
+
+              emailjs.sendForm(
+                'umamiphotobooth',
+                'umamiphotoboothtemplate',
+                document.querySelector('#emailjsform'),
+                'ZmY3p17W089Wzndyc',
+              ).then(() => {console.log('done')}, (err) => {
+                console.error(err)
+              })
+            }}>
+              <input type="email" name="email" id="email" placeholder="Email" autocomplete="off"/>
+              <input type="file" name="photo" id="photo"/>
+              <input type="submit" value="Send" id="send"/>
+            </form>
+          </div>
+          <Fab
+            variant="extended"
+            color="warning"
+            size="medium"
+            sx={{
+              position: 'absolute',
+              right: '50%',
+              mr: -8,
+              bottom: '20vh',
+            }}
+            onClick={() => setImgSrc(null)}
+          >
+            <RestartAltIcon
+              sx={{mr: 1}}
+            />
+              Retake
+          </Fab>
+        </div>
+      </>
     )
   }
 
@@ -131,9 +136,11 @@ function App() {
         style={{
           position: 'absolute',
           top: 310,
-          left: -230,
-          width: '100vh',
+          left: '50vw',
+          marginLeft: '-46.75vh',
+          width: '93.5vh',
           transform: 'rotate(-90deg)',
+          boxShadow: '#000a 0 0.25em 2em',
         }}
       >
         {({ getScreenshot }) => (
@@ -180,7 +187,7 @@ function App() {
                   style={{
                     position: 'absolute',
                     left: '50vw',
-                    bottom: '25vh',
+                    bottom: '27vh',
                     marginLeft: '-6em',
                     marginBottom: '-6em',
                   }}
@@ -274,9 +281,9 @@ function rotate(srcBase64, degrees, callback) {
     canvas.width  = degrees % 180 === 0 ? image.width : image.height
     canvas.height = degrees % 180 === 0 ? image.height : image.width
 
-    ctx.translate(canvas.width / 10, canvas.height / 10)
+    ctx.translate(canvas.width / 2, canvas.height / 2)
     ctx.rotate(degrees * Math.PI / 180)
-    ctx.drawImage(image, image.width / -8, image.height / -8)
+    ctx.drawImage(image, image.width / -2, image.height / -2)
 
     callback(canvas.toDataURL())
   }
@@ -285,13 +292,13 @@ function rotate(srcBase64, degrees, callback) {
 }
 
 function dataURLtoFile(dataurl, filename) {
-    var arr = dataurl.split(','),
-        mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[arr.length - 1]), 
-        n = bstr.length, 
-        u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, {type:mime});
+ const arr = dataurl.split(',')
+ const mime = arr[0].match(/:(.*?)/)[1]
+ const bstr = atob(arr[arr.length - 1])
+ let n = bstr.length
+ const u8arr = new Uint8Array(n)
+ while(n--){
+		 u8arr[n] = bstr.charCodeAt(n)
+ }
+ return new File([u8arr], filename, {type:mime})
 }
