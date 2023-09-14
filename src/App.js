@@ -8,8 +8,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import CircularProgress from '@mui/material/CircularProgress'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import Countdown from 'react-countdown'
 
 import SettingsIcon from '@mui/icons-material/Settings'
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto'
+import BackspaceIcon from '@mui/icons-material/Backspace'
 import CameraIcon from '@mui/icons-material/Camera'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import NorthIcon from '@mui/icons-material/North'
@@ -31,6 +34,7 @@ function App() {
   const [isCounting, setIsCounting] = React.useState(false)
   const [isFullscreen, setIsFullscreen] = React.useState(false)
   const [isSending, setIsSending] = React.useState(false)
+  const [isSuccess, setIsSuccess] = React.useState(false)
   const [duration, setDuration] = React.useState(5)
   const [rotation, setRotation] = React.useState(-90)
   const [imgSrc, setImgSrc] = React.useState(null)
@@ -206,7 +210,94 @@ function App() {
               left: 0,
               bottom: 0,
               right: 0,
-              display: 'flex',
+              display: !isSuccess ? 'none' : 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#000a',
+              color: '#fff',
+              padding: '3rem',
+              flexDirection: 'column',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '4rem',
+              }}
+            >
+              Your photo should be in your inbox!
+            </div>
+            <div
+              style={{
+                fontSize: '2rem',
+              }}
+            >
+              (Check your spam folder if you don't see it.)
+            </div>
+            <Fab
+              variant="extended"
+              color="primary"
+              size="medium"
+              sx={{
+                fontSize: '4rem',
+                height: '5rem',
+                marginTop: '5rem',
+              }}
+              onClick={() => {
+                setIsSuccess(false)
+                setImgSrc(null)
+              }}
+              className="bounce-in"
+            >
+              <AddAPhotoIcon
+                sx={{
+                  fontSize: '4rem',
+                  mr: '1rem',
+                }}
+              />
+                Take a new photo
+            </Fab>
+            <Fab
+              variant="extended"
+              color="error"
+              size="medium"
+              sx={{
+                fontSize: '3rem',
+                height: '5rem',
+                marginTop: '2rem',
+              }}
+              onClick={() => {
+                setIsSuccess(false)
+                setEmail(null)
+                setImgSrc(null)
+              }}
+              className="bounce-in"
+            >
+              <BackspaceIcon
+                sx={{
+                  fontSize: '4rem',
+                  mr: '1rem',
+                }}
+              />
+                Clear Email & Finish
+                ({<Countdown
+                  date={Date.now() + 30000}
+                  renderer={({seconds}) => <span>{seconds}</span>}
+                  onComplete={() => {
+                    setIsSuccess(false)
+                    setEmail(null)
+                    setImgSrc(null)
+                  }}
+                />})
+            </Fab>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              display: isSuccess ? 'none' : 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -262,8 +353,8 @@ function App() {
                       document.querySelector('#emailjsform'),
                       'ZmY3p17W089Wzndyc',
                     ).then(() => {
+                      setIsSuccess(true)
                       setIsSending(false)
-                      setImgSrc(null)
                     }, (err) => {
                       setIsSending(false)
                       setError(err)
