@@ -25,6 +25,7 @@ function App() {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
   const [isCounting, setIsCounting] = React.useState(false)
   const [duration, setDuration] = React.useState(3)
+  const [rotation, setRotation] = React.useState(-90)
   const [imgSrc, setImgSrc] = React.useState(null)
   const [email, setEmail ] = React.useState('')
   // const [error, setError] = React.useState(false)
@@ -54,7 +55,7 @@ function App() {
   )
 
   const handleCountdown = (e, getScreenshot) => {
-    rotate(getScreenshot(), -90, (i) => {
+    rotate(getScreenshot(), rotation, (i) => {
       setImgSrc(i)
       setIsCounting(false)
     })
@@ -148,7 +149,7 @@ function App() {
           left: '50vw',
           marginLeft: '-46.75vh',
           width: '93.5vh',
-          transform: 'rotate(-90deg)',
+          transform: `rotate(${rotation}deg)`,
           boxShadow: '#000a 0 0.25em 2em',
         }}
       >
@@ -259,6 +260,17 @@ function App() {
         >
           <MenuItem value={3}>3s</MenuItem>
           <MenuItem value={5}>5s</MenuItem>
+        </Select>
+        <Select
+          value={rotation}
+          onChange={(e) => setRotation(e.target.value)}
+          sx={{
+            margin: '1em',
+          }}
+        >
+          <MenuItem value={0}>0</MenuItem>
+          <MenuItem value={90}>90</MenuItem>
+          <MenuItem value={-90}>-90</MenuItem>
         </Select>
         <Fab
           variant="extended"
