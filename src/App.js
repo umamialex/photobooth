@@ -3,6 +3,7 @@ import React from 'react'
 import Webcam from 'react-webcam'
 import Drawer from '@mui/material/Drawer'
 import Fab from '@mui/material/Fab'
+import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
@@ -11,6 +12,8 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import CameraIcon from '@mui/icons-material/Camera'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import NorthIcon from '@mui/icons-material/North'
+import FullscreenIcon from '@mui/icons-material/Fullscreen'
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 
 import emailjs from '@emailjs/browser'
 
@@ -24,6 +27,7 @@ function App() {
   const [devices, setDevices] = React.useState([])
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
   const [isCounting, setIsCounting] = React.useState(false)
+  const [isFullscreen, setIsFullscreen] = React.useState(false)
   const [duration, setDuration] = React.useState(3)
   const [rotation, setRotation] = React.useState(-90)
   const [imgSrc, setImgSrc] = React.useState(null)
@@ -53,6 +57,18 @@ function App() {
     },
     [handleDevices]
   )
+
+  const handleFullscreen = () => {
+    setIsFullscreen(!isFullscreen)
+
+    if (!isFullscreen) {
+      document.documentElement.requestFullscreen()
+
+      return
+    }
+
+    document.exitFullscreen()
+  }
 
   const handleCountdown = (e, getScreenshot) => {
     rotate(getScreenshot(), rotation, (i) => {
@@ -244,7 +260,7 @@ function App() {
           value={deviceId}
           onChange={handleChange}
           sx={{
-            margin: '1em',
+            margin: 1,
           }}
         >
           {devices.map((device, key) => {
@@ -255,7 +271,7 @@ function App() {
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
           sx={{
-            margin: '1em',
+            margin: 1,
           }}
         >
           <MenuItem value={3}>3s</MenuItem>
@@ -265,26 +281,37 @@ function App() {
           value={rotation}
           onChange={(e) => setRotation(e.target.value)}
           sx={{
-            margin: '1em',
+            margin: 1,
           }}
         >
           <MenuItem value={0}>0</MenuItem>
           <MenuItem value={90}>90</MenuItem>
           <MenuItem value={-90}>-90</MenuItem>
         </Select>
-        <Fab
-          variant="extended"
+        <Button
+          variant="contained"
+          color={isFullscreen ? 'error' : 'primary'}
+          size="large"
+          sx={{
+            margin: 1,
+          }}
+          onClick={handleFullscreen}
+          endIcon={isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        >
+          {isFullscreen ? 'Windowed' : 'Fullscreen'}
+        </Button>
+        <Button
+          variant="contained"
           color="warning"
           size="large"
           sx={{
-            mt: 1,
+            margin: 1,
           }}
           onClick={() => location.reload()}
+          endIcon={<RestartAltIcon />}
         >
-          <RestartAltIcon
-            sx={{margin: 1}}
-          />
-        </Fab>
+          Refresh
+        </Button>
       </Drawer>
     </>
   )
