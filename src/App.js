@@ -6,6 +6,7 @@ import Fab from '@mui/material/Fab'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
+import CircularProgress from '@mui/material/CircularProgress'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -16,6 +17,7 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen'
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 
 import emailjs from '@emailjs/browser'
+import validator from 'email-validator'
 
 import useSound from 'use-sound'
 
@@ -28,11 +30,12 @@ function App() {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
   const [isCounting, setIsCounting] = React.useState(false)
   const [isFullscreen, setIsFullscreen] = React.useState(false)
+  const [isSending, setIsSending] = React.useState(false)
   const [duration, setDuration] = React.useState(3)
   const [rotation, setRotation] = React.useState(-90)
   const [imgSrc, setImgSrc] = React.useState(null)
   const [email, setEmail ] = React.useState('')
-  // const [error, setError] = React.useState(false)
+  const [error, setError] = React.useState(false)
   const [playBeep] = useSound(beep)
   const [playShutter] = useSound(shutter)
 
@@ -77,10 +80,111 @@ function App() {
     })
   }
 
+  const settingsComponent = (
+    <>
+      <Fab
+        color="error"
+        size="small"
+        onClick={() => setIsDrawerOpen(true)}
+        sx={{
+          position: 'absolute',
+          right: '1em',
+          top: '1em',
+        }}
+      >
+        <SettingsIcon/>
+      </Fab>
+      <Drawer
+        anchor="right"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+      >
+        <Select
+          value={deviceId}
+          onChange={handleChange}
+          sx={{
+            margin: 1,
+          }}
+        >
+          {devices.map((device, key) => {
+            return <MenuItem value={device.deviceId}>{device.label}</MenuItem>
+          })}
+        </Select>
+        <Select
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          sx={{
+            margin: 1,
+          }}
+        >
+          <MenuItem value={3}>3s</MenuItem>
+          <MenuItem value={5}>5s</MenuItem>
+        </Select>
+        <Select
+          value={rotation}
+          onChange={(e) => setRotation(e.target.value)}
+          sx={{
+            margin: 1,
+          }}
+        >
+          <MenuItem value={0}>0</MenuItem>
+          <MenuItem value={90}>90</MenuItem>
+          <MenuItem value={-90}>-90</MenuItem>
+        </Select>
+        <Button
+          variant="contained"
+          color={isFullscreen ? 'error' : 'primary'}
+          size="large"
+          sx={{
+            margin: 1,
+          }}
+          onClick={handleFullscreen}
+          endIcon={isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        >
+          {isFullscreen ? 'Windowed' : 'Fullscreen'}
+        </Button>
+        <Button
+          variant="contained"
+          color="warning"
+          size="large"
+          sx={{
+            margin: 1,
+          }}
+          onClick={() => location.reload()}
+          endIcon={<RestartAltIcon />}
+        >
+          Refresh
+        </Button>
+      </Drawer>
+    </>
+  )
+
   if (imgSrc) {
     return (
       <>
         <div id="flash" />
+        <div
+          style={{
+            display: isSending ? 'block' : 'none',
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: '#000c',
+            zIndex: 100000,
+            textAlign: 'center',
+          }}
+        >
+        
+          <CircularProgress
+            size={200}
+            color="primary"
+            sx={{
+              marginTop: '40vh',
+            }}
+          />
+        </div>
         <div
           style={{
             paddingTop: '1.9em',
@@ -96,24 +200,55 @@ function App() {
             }}
           />
           <div className="form bounce-in">
+            <div
+              style={{
+                color: '#c00',
+                fontWeight: 'bold',
+                display: error ? 'block' : 'none',
+                marginBottom: '1em',
+              }}
+            >
+              {
+                error && error.message === 'invalid email'
+                  ? 'Please enter a valid email address.'
+                  : 'Oops something went wrong. Please try again.'
+              }
+            </div>
             <form id="emailjsform" onSubmit={function(e) {
               event.preventDefault()
 
+              if (!validator.validate(email)) {
+                setError(new Error('invalid email'))
+
+                return
+              }
+
+              setError(null)
               const dT = new DataTransfer()
               dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
               document.querySelector('#photo').files = dT.files
 
-              emailjs.sendForm(
-                'umamiphotobooth',
-                'umamiphotoboothtemplate',
-                document.querySelector('#emailjsform'),
-                'ZmY3p17W089Wzndyc',
-              ).then(() => {
-                setImgSrc(null)
-              }, (err) => {
+              setIsSending(true)
+
+              try {
+                emailjs.sendForm(
+                  'umamiphotobooth',
+                  'umamiphotoboothtemplate',
+                  document.querySelector('#emailjsform'),
+                  'ZmY3p17W089Wzndyc',
+                ).then(() => {
+                  setIsSending(false)
+                  setImgSrc(null)
+                }, (err) => {
+                  setIsSending(false)
+                  setError(err)
+                  console.error(err)
+                })
+              } catch (err) {
+                setIsSending(false)
+                setError(err)
                 console.error(err)
-                setImgSrc(null)
-              })
+              }
             }}>
               <input
                 type="email"
@@ -125,7 +260,7 @@ function App() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <input type="file" name="photo" id="photo"/>
-              <input type="submit" value="Send" id="send"/>
+              <input type="submit" value="Send" id="send" disabled={isSending}/>
             </form>
           </div>
           <Fab
@@ -147,6 +282,7 @@ function App() {
               Retake
           </Fab>
         </div>
+        {settingsComponent}
       </>
     )
   }
@@ -239,80 +375,7 @@ function App() {
           </>
         )}
       </Webcam>
-      <Fab
-        color="error"
-        size="small"
-        onClick={() => setIsDrawerOpen(true)}
-        sx={{
-          position: 'absolute',
-          right: '1em',
-          top: '1em',
-        }}
-      >
-        <SettingsIcon/>
-      </Fab>
-      <Drawer
-        anchor="right"
-        onClose={() => setIsDrawerOpen(false)}
-        open={isDrawerOpen}
-      >
-        <Select
-          value={deviceId}
-          onChange={handleChange}
-          sx={{
-            margin: 1,
-          }}
-        >
-          {devices.map((device, key) => {
-            return <MenuItem value={device.deviceId}>{device.label}</MenuItem>
-          })}
-        </Select>
-        <Select
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-          sx={{
-            margin: 1,
-          }}
-        >
-          <MenuItem value={3}>3s</MenuItem>
-          <MenuItem value={5}>5s</MenuItem>
-        </Select>
-        <Select
-          value={rotation}
-          onChange={(e) => setRotation(e.target.value)}
-          sx={{
-            margin: 1,
-          }}
-        >
-          <MenuItem value={0}>0</MenuItem>
-          <MenuItem value={90}>90</MenuItem>
-          <MenuItem value={-90}>-90</MenuItem>
-        </Select>
-        <Button
-          variant="contained"
-          color={isFullscreen ? 'error' : 'primary'}
-          size="large"
-          sx={{
-            margin: 1,
-          }}
-          onClick={handleFullscreen}
-          endIcon={isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-        >
-          {isFullscreen ? 'Windowed' : 'Fullscreen'}
-        </Button>
-        <Button
-          variant="contained"
-          color="warning"
-          size="large"
-          sx={{
-            margin: 1,
-          }}
-          onClick={() => location.reload()}
-          endIcon={<RestartAltIcon />}
-        >
-          Refresh
-        </Button>
-      </Drawer>
+      {settingsComponent}
     </>
   )
 }
