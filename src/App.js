@@ -36,7 +36,8 @@ function App() {
       const d = mediaDevices.filter(({ kind }) => kind === "videoinput")
       setDevices(d)
 
-      setDeviceId(d.find((c) => (c.label.includes('ZV'))).deviceId)
+      const cam = d.find((c) => c.label.includes('ZV')) || d[0]
+      setDeviceId(cam.deviceId)
     },
     [setDevices, setDeviceId]
   )
