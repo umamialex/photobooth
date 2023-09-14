@@ -31,7 +31,7 @@ function App() {
   const [isCounting, setIsCounting] = React.useState(false)
   const [isFullscreen, setIsFullscreen] = React.useState(false)
   const [isSending, setIsSending] = React.useState(false)
-  const [duration, setDuration] = React.useState(3)
+  const [duration, setDuration] = React.useState(5)
   const [rotation, setRotation] = React.useState(-90)
   const [imgSrc, setImgSrc] = React.useState(null)
   const [email, setEmail ] = React.useState('')
@@ -199,88 +199,117 @@ function App() {
               boxShadow: '#000a 0 0.25em 2em',
             }}
           />
-          <div className="form bounce-in">
-            <div
-              style={{
-                color: '#c00',
-                fontWeight: 'bold',
-                display: error ? 'block' : 'none',
-                marginBottom: '1em',
-              }}
-            >
-              {
-                error && error.message === 'invalid email'
-                  ? 'Please enter a valid email address.'
-                  : 'Oops something went wrong. Please try again.'
-              }
-            </div>
-            <form id="emailjsform" onSubmit={function(e) {
-              event.preventDefault()
-
-              if (!validator.validate(email)) {
-                setError(new Error('invalid email'))
-
-                return
-              }
-
-              setError(null)
-              const dT = new DataTransfer()
-              dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
-              document.querySelector('#photo').files = dT.files
-
-              setIsSending(true)
-
-              try {
-                emailjs.sendForm(
-                  'umamiphotobooth',
-                  'umamiphotoboothtemplate',
-                  document.querySelector('#emailjsform'),
-                  'ZmY3p17W089Wzndyc',
-                ).then(() => {
-                  setIsSending(false)
-                  setImgSrc(null)
-                }, (err) => {
-                  setIsSending(false)
-                  setError(err)
-                  console.error(err)
-                })
-              } catch (err) {
-                setIsSending(false)
-                setError(err)
-                console.error(err)
-              }
-            }}>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Email"
-                autocomplete="off"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input type="file" name="photo" id="photo"/>
-              <input type="submit" value="Send" id="send" disabled={isSending}/>
-            </form>
-          </div>
-          <Fab
-            variant="extended"
-            color="warning"
-            size="medium"
-            sx={{
+          <div
+            style={{
               position: 'absolute',
-              right: '50%',
-              mr: -8,
-              bottom: '35vh',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            onClick={() => setImgSrc(null)}
-            className="bounce-in"
           >
-            <RestartAltIcon
-              sx={{mr: 1}}
-            />
-              Retake
-          </Fab>
+            <div>
+              <div className="form bounce-in">
+                <div
+                  style={{
+                    color: '#00f',
+                    fontWeight: 'bold',
+                    marginBottom: '1em',
+                    fontSize: '2rem',
+                    textAlign: 'left',
+                  }}
+                >
+                  Enter your email address and hit send to receive<br/>your photo.
+                </div>
+                <div
+                  style={{
+                    color: '#d00',
+                    fontWeight: 'bold',
+                    display: error ? 'block' : 'none',
+                    marginBottom: '1em',
+                    fontSize: '2rem',
+                  }}
+                >
+                  {
+                    error && error.message === 'invalid email'
+                      ? 'Please enter a valid email address.'
+                      : 'Oops something went wrong. Please try again.'
+                  }
+                </div>
+                <form id="emailjsform" onSubmit={function(e) {
+                  event.preventDefault()
+
+                  if (!validator.validate(email)) {
+                    setError(new Error('invalid email'))
+
+                    return
+                  }
+
+                  setError(null)
+                  const dT = new DataTransfer()
+                  dT.items.add(dataURLtoFile(imgSrc, 'photo.jpg'))
+                  document.querySelector('#photo').files = dT.files
+
+                  setIsSending(true)
+
+                  try {
+                    emailjs.sendForm(
+                      'umamiphotobooth',
+                      'umamiphotoboothtemplate',
+                      document.querySelector('#emailjsform'),
+                      'ZmY3p17W089Wzndyc',
+                    ).then(() => {
+                      setIsSending(false)
+                      setImgSrc(null)
+                    }, (err) => {
+                      setIsSending(false)
+                      setError(err)
+                      console.error(err)
+                    })
+                  } catch (err) {
+                    setIsSending(false)
+                    setError(err)
+                    console.error(err)
+                  }
+                }}>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="Email"
+                    autocomplete="off"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <input type="file" name="photo" id="photo"/>
+                  <input type="submit" value="Send" id="send" disabled={isSending}/>
+                </form>
+              </div>
+              <Fab
+                variant="extended"
+                color="error"
+                size="medium"
+                sx={{
+                  fontSize: '4rem',
+                  height: '5rem',
+                  marginTop: '2rem',
+                }}
+                onClick={() => setImgSrc(null)}
+                className="bounce-in"
+              >
+                <RestartAltIcon
+                  sx={{
+                    fontSize: '4rem',
+                    mr: 1
+                  }}
+                />
+                  Retake
+              </Fab>
+            </div>
+          </div>
         </div>
         {settingsComponent}
       </>
@@ -308,23 +337,38 @@ function App() {
         {({ getScreenshot }) => (
           <>
             {!isCounting ? (
-              <Fab
-                variant="extended"
-                color="success"
-                size="large"
-                sx={{
-                  position: 'absolute',
-                  right: '50%',
-                  mr: -13,
-                  bottom: '35vh',
-                }}
+              <div
                 onClick={() => setIsCounting(true)}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: '4rem',
+                  textAlign: 'center',
+                  padding: '0 10rem 0 10rem',
+                }}
               >
-                <CameraIcon
-                  sx={{mr: 1}}
-                />
-                {duration} Second Countdown
-              </Fab>
+                <div
+                  style={{
+                    marginTop: '20rem',
+                    textShadow: '0 0 0.25rem #000',
+                  }}
+                >
+                  Tap anywhere to take a picture<br/>
+                  <CameraIcon
+                    sx={{
+                      fontSize: '10rem',
+                      marginTop: '1rem',
+                    }}
+                  />
+                </div>
+              </div>
             ) : null}
             {isCounting ? (
               <>
@@ -333,17 +377,21 @@ function App() {
                     position: 'absolute',
                     left: '0vw',
                     width: '100vw',
-                    top: '10vh',
+                    top: '3rem',
                     textAlign: 'center',
                     display: 'inline-block',
                     color: '#fff',
+                    fontSize: '3rem',
                   }}
                   className="bounce"
                 >
-                  <NorthIcon fontSize="large" sx={{mb: -2}}/>
-                  <h1>
+                  <NorthIcon fontSize="large" sx={{
+                    mb: -2,
+                    fontSize: '5rem',
+                  }}/>
+                  <div>
                     Look up at<br/>the camera! 
-                  </h1>
+                  </div>
                 </div>
                 <div
                   style={{
@@ -364,10 +412,13 @@ function App() {
                     onUpdate={(t) => t ? playBeep() : playShutter()}
                   >
                     {({ remainingTime }) => 
-                      <h1
-                        style={{color: '#fff'}}
+                      <div
+                        style={{
+                          color: '#fff',
+                          fontSize: '4rem',
+                        }}
                         className="bounce2"
-                      >{remainingTime}</h1>}
+                      >{remainingTime}</div>}
                   </CountdownCircleTimer>
                 </div>
               </>
