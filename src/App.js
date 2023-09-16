@@ -203,100 +203,102 @@ function App() {
               boxShadow: '#000a 0 0.25em 2em',
             }}
           />
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              display: !isSuccess ? 'none' : 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#000a',
-              color: '#fff',
-              padding: '3rem',
-              flexDirection: 'column',
-            }}
-          >
+          {isSuccess ? (
             <div
               style={{
-                fontSize: '4rem',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#000a',
+                color: '#fff',
+                padding: '3rem',
+                flexDirection: 'column',
               }}
             >
-              Your photo should be in your inbox!
-            </div>
-            <div
-              style={{
-                fontSize: '2rem',
-              }}
-            >
-              (Check your spam folder if you don't see it.)
-            </div>
-            <Fab
-              variant="extended"
-              color="primary"
-              size="medium"
-              sx={{
-                fontSize: '4rem',
-                height: '5rem',
-                marginTop: '5rem',
-              }}
-              onClick={() => {
-                setIsSuccess(false)
-                setImgSrc(null)
-              }}
-              className="bounce-in"
-            >
-              <AddAPhotoIcon
+              <div
+                style={{
+                  fontSize: '4rem',
+                }}
+              >
+                Your photo should be in your inbox!
+              </div>
+              <div
+                style={{
+                  fontSize: '2rem',
+                }}
+              >
+                (Check your spam folder if you don't see it.)
+              </div>
+              <Fab
+                variant="extended"
+                color="primary"
+                size="medium"
                 sx={{
                   fontSize: '4rem',
-                  mr: '1rem',
+                  height: '5rem',
+                  marginTop: '5rem',
                 }}
-              />
-                Take a new photo
-            </Fab>
-            <Fab
-              variant="extended"
-              color="error"
-              size="medium"
-              sx={{
-                fontSize: '3rem',
-                height: '5rem',
-                marginTop: '2rem',
-              }}
-              onClick={() => {
-                setIsSuccess(false)
-                setEmail(null)
-                setImgSrc(null)
-              }}
-              className="bounce-in"
-            >
-              <BackspaceIcon
-                sx={{
-                  fontSize: '4rem',
-                  mr: '1rem',
+                onClick={() => {
+                  setIsSuccess(false)
+                  setImgSrc(null)
                 }}
-              />
-                Clear Email & Finish
-                ({<Countdown
-                  date={Date.now() + 30000}
-                  renderer={({seconds}) => <span>{seconds}</span>}
-                  onComplete={() => {
-                    setIsSuccess(false)
-                    setEmail(null)
-                    setImgSrc(null)
+                className="bounce-in"
+              >
+                <AddAPhotoIcon
+                  sx={{
+                    fontSize: '4rem',
+                    mr: '1rem',
                   }}
-                />})
-            </Fab>
-          </div>
+                />
+                  Take a new photo
+              </Fab>
+              <Fab
+                variant="extended"
+                color="error"
+                size="medium"
+                sx={{
+                  fontSize: '3rem',
+                  height: '5rem',
+                  marginTop: '2rem',
+                }}
+                onClick={() => {
+                  setIsSuccess(false)
+                  setEmail(null)
+                  setImgSrc(null)
+                }}
+                className="bounce-in"
+              >
+                <BackspaceIcon
+                  sx={{
+                    fontSize: '4rem',
+                    mr: '1rem',
+                  }}
+                />
+                  Clear Email & Finish
+                  ({<Countdown
+                    date={Date.now() + 30000}
+                    renderer={({seconds}) => <span>{seconds}</span>}
+                    onComplete={() => {
+                      setIsSuccess(false)
+                      setEmail(null)
+                      setImgSrc(null)
+                    }}
+                  />})
+              </Fab>
+            </div>
+          ) : null}
           <div
             style={{
               position: 'absolute',
               top: 0,
-              left: 0,
+              left: '5rem',
               bottom: 0,
-              right: 0,
+              right: '5rem',
               display: isSuccess ? 'none' : 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -306,14 +308,15 @@ function App() {
               <div className="form bounce-in">
                 <div
                   style={{
-                    color: '#00f',
+                    color: '#000',
                     fontWeight: 'bold',
                     marginBottom: '1em',
                     fontSize: '2rem',
                     textAlign: 'left',
                   }}
                 >
-                  Enter your email address and hit send to receive<br/>your photo.
+                  Enter your email and tap send to receive your photo.
+                  <p>If you leave an empty email address, the bride & groom will receive the photo to share later.</p>
                 </div>
                 <div
                   style={{
@@ -333,7 +336,7 @@ function App() {
                 <form id="emailjsform" onSubmit={function(e) {
                   event.preventDefault()
 
-                  if (!validator.validate(email)) {
+                  if (email && email.length && !validator.validate(email)) {
                     setError(new Error('invalid email'))
 
                     return
@@ -370,7 +373,7 @@ function App() {
                     type="email"
                     name="email"
                     id="email"
-                    placeholder="Email"
+                    placeholder="Email (Optional)"
                     autocomplete="off"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
