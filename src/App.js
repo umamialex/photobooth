@@ -164,7 +164,7 @@ function App() {
             margin: '1rem',
           }}
         >
-          {process.env.BRANCH}/{process.env.COMMIT_REF}
+          {process.env.REACT_APP_BRANCH}/{process.env.REACT_APP_COMMIT_REF}
         </div>
       </Drawer>
     </>
