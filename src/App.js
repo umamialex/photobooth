@@ -159,6 +159,13 @@ function App() {
         >
           Refresh
         </Button>
+        <div
+          style={{
+            margin: '1rem',
+          }}
+        >
+          {process.env.BRANCH}/{process.env.COMMIT_REF}
+        </div>
       </Drawer>
     </>
   )
